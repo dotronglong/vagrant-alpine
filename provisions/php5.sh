@@ -84,4 +84,4 @@ mv phpMyAdmin-4.0.10.18-english phpmyadmin
 cd phpmyadmin
 cp config.sample.inc.php config.inc.php
 
-sed -i "s|cfg['blowfish_secret']\s*=\s*'a8b7c6d';|cfg['blowfish_secret']\s*=\s*'${PHPMYADMIN_BLOWFISH_SECRET}';|g" /etc/php5/php-fpm.conf
+sed -i "s|cfg\['blowfish_secret'\]\s*=\s*'a8b7c6d';|cfg['blowfish_secret'] = '${PHPMYADMIN_BLOWFISH_SECRET}';|g" config.inc.php
