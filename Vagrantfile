@@ -9,5 +9,6 @@ Vagrant.configure("2") do |config|
      vb.memory = "4096"
      vb.cpus = 2
   end
+  #config.vm.synced_folder "./provisions/nginx/conf.d", "/etc/nginx/conf.d", type: "nfs"
   config.vm.provision "shell", path: "./provisions/php5.sh"
 end

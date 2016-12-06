@@ -1,6 +1,8 @@
 export PHP_FPM_USER="www"
 export PHP_FPM_GROUP="www"
 export PHP_FPM_LISTEN_MODE="0660"
+export PHP_FPM_ERROR_LOG="/var/log/fpm-php.www.log"
+
 export PHP_MEMORY_LIMIT="1028M"
 export PHP_MAX_UPLOAD="333M"
 export PHP_MAX_FILE_UPLOAD="300"
@@ -17,4 +19,4 @@ export MYSQL_USER="longdt"
 export MYSQL_PASS="123456"
 export MYSQL_MAX_ALLOWED_PACKET="200M"
 
-export PHPMYADMIN_BLOWFISH_SECRET="52vaRAjb8PzdkDUF"
+export PHPMYADMIN_BLOWFISH_SECRET="b28ac3cc8e036bbdab0b05ea98b0bb58"

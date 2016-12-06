@@ -1,6 +1,6 @@
 #!/bin/sh
 apk update
-apk add curl
+apk add curl curl-dev openssl-dev
 source /vagrant/provisions/env.sh
 
 ### NGINX ###
@@ -31,12 +31,18 @@ apk add php5-fpm \
     php5-memcache php5-iconv php5-pdo_dblib php5-curl php5-ctype \
     php5-pcntl php5-intl php5-zlib php5-ftp php5-phalcon php5-gd
 
-sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php5/php-fpm.conf
-sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php5/php-fpm.conf
-sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php5/php-fpm.conf
-sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php5/php-fpm.conf
-sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php5/php-fpm.conf
-sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php5/php-fpm.conf
+cp -pr /vagrant/provisions/php-fpm/php-fpm.conf /etc/php5/php-fpm.conf
+rm -rf /etc/php5/fpm.d
+cp -pr /vagrant/provisions/php-fpm/fpm.d /etc/php5/fpm.d
+
+sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php5/fpm.d/www.conf
+sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php5/fpm.d/www.conf
+sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php5/fpm.d/www.conf
+sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php5/fpm.d/www.conf
+sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php5/fpm.d/www.conf
+sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php5/fpm.d/www.conf
+sed -i "s|php_admin_value[memory_limit]\s*=\s*32M|php_admin_value[memory_limit] = ${PHP_MEMORY_LIMIT}|g" /etc/php5/fpm.d/www.conf
+sed -i "s|;php_admin_value[error_log]\s*=\s*www.log|php_admin_value[error_log] = ${PHP_FPM_ERROR_LOG}|g" /etc/php5/fpm.d/www.conf
 
 sed -i "s|display_errors\s*=\s*Off|display_errors = ${PHP_DISPLAY_ERRORS}|i" /etc/php5/php.ini
 sed -i "s|display_startup_errors\s*=\s*Off|display_startup_errors = ${PHP_DISPLAY_STARTUP_ERRORS}|i" /etc/php5/php.ini
@@ -83,5 +89,7 @@ unzip phpMyAdmin-4.0.10.18-english.zip && rm -rf phpMyAdmin-4.0.10.18-english.zi
 mv phpMyAdmin-4.0.10.18-english phpmyadmin
 cd phpmyadmin
 cp config.sample.inc.php config.inc.php
+chown -R vagrant /home/vagrant/phpmyadmin
+ln -s /home/vagrant/phpmyadmin /www/phpmyadmin
 
 sed -i "s|cfg\['blowfish_secret'\]\s*=\s*'a8b7c6d';|cfg['blowfish_secret'] = '${PHPMYADMIN_BLOWFISH_SECRET}';|g" config.inc.php
